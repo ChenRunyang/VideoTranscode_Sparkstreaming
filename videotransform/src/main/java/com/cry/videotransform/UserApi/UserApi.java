@@ -267,7 +267,7 @@ public class UserApi {
     }
 
     @GetMapping("/transformvideo")
-    public Object transformvideo(@RequestParam(value = "user") String user, @RequestParam(value = "name") String name, @RequestParam(value = "codec") String codec,@RequestParam(value = "format") String format) throws FrameGrabber.Exception, FileNotFoundException, InterruptedException {
+    public Object transformvideo(@RequestParam(value = "user") String user, @RequestParam(value = "name") String name, @RequestParam(value = "codec") String codec,@RequestParam(value = "format") String format) throws IOException, InterruptedException {
         JSONObject jsonObject = new JSONObject();
         String path = videoService.getvideopath(user,name);
         ArrayList<String> dividefiles=fileTrans.divideFile(path,format,300);  //视频分割(每五分钟切割一次)

@@ -1,9 +1,6 @@
 package com.cry.videotransform.service;
 
-import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.configuration.Configuration;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.bouncycastle.asn1.cmc.TaggedRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -12,7 +9,6 @@ import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 
 import java.io.*;
 
@@ -107,6 +103,51 @@ public class fileStore {
             pw.close();
             fw.close();
         } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void exeCmd(String commandStr) {
+        BufferedReader br = null;
+        try {
+            Process p = Runtime.getRuntime().exec(commandStr);
+            p.waitFor();
+            br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line = null;
+            StringBuilder sb = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            System.out.println(sb.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally
+        {
+            if (br != null)
+            {
+                try {
+                    br.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    void deletetmp(String det)
+    {
+        try(FileReader reader = new FileReader(det);
+        BufferedReader br = new BufferedReader(reader))
+        {
+            String tmp;
+            while((tmp = br.readLine())!=null)
+            {
+                deletepath(tmp);    //删除切片的视频片段
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -240,6 +281,8 @@ public class fileStore {
         {
             merger.wait(3000);        //超时或收到已转码信息
         }
-
+        exeCmd("ffmpeg -f concat -i "+path.split(".")[0]+".txt -c copy "+path);    //合并转码文件
+        deletetmp(path.split(".")[0]+".txt");
+        deletepath(path.split(".")[0]+".txt");
     }
 }

@@ -75,5 +75,4 @@ public class VideoService {
         int roomid = Integer.parseInt(room);
         return videoDao.delroom(roomid);
     }
-
 }
