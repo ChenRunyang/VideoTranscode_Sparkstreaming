@@ -1,5 +1,6 @@
 package com.cry.videotransform.service;
 
+import javafx.util.Pair;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,11 +12,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 import static java.lang.System.exit;
 
 @Service
 public class fileStore {
+
+    private ArrayList<Pair<String,String>> tmpTime;
+    private HashMap<String,Date> startTime;
 
     @Autowired
     private static RedisTemplate<String,Object> redisTemplate;
@@ -135,7 +142,7 @@ public class fileStore {
         }
     }
 
-    void deletetmp(String det)
+    public void deletetmp(String det)
     {
         try(FileReader reader = new FileReader(det);
         BufferedReader br = new BufferedReader(reader))
@@ -150,6 +157,27 @@ public class fileStore {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Integer getcurrect()
+    {
+        return redisTemplate.keys("*").size();                 //全部进行查找
+    }
+
+    public HashMap<String, Date> getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(HashMap<String, Date> startTime) {
+        this.startTime = startTime;
+    }
+
+    public ArrayList<Pair<String, String>> getTmpTime() {
+        return tmpTime;
+    }
+
+    public void setTmpTime(ArrayList<Pair<String, String>> tmpTime) {
+        this.tmpTime = tmpTime;
     }
 
     @KafkaListener(id="H264",topics="H264Que")
@@ -284,5 +312,6 @@ public class fileStore {
         exeCmd("ffmpeg -f concat -i "+path.split(".")[0]+".txt -c copy "+path);    //合并转码文件
         deletetmp(path.split(".")[0]+".txt");
         deletepath(path.split(".")[0]+".txt");
+
     }
 }

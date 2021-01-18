@@ -7,25 +7,24 @@ import com.cry.videotransform.service.MakeM3U8Service;
 import com.cry.videotransform.service.VideoService;
 import com.cry.videotransform.service.fileStore;
 import com.cry.videotransform.service.fileTrans;
+import javafx.util.Pair;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import org.apache.http.entity.ContentType;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import static com.cry.videotransform.service.ProducerService.getProducerService;
 
@@ -271,6 +270,8 @@ public class UserApi {
         JSONObject jsonObject = new JSONObject();
         String path = videoService.getvideopath(user,name);
         ArrayList<String> dividefiles=fileTrans.divideFile(path,format,300);  //视频分割(每五分钟切割一次)
+        Date now = new Date();    //计算转码时间
+        filestore.getStartTime().put(path,now);
         for(String dividedfile:dividefiles)
         {
             File file=new File(dividedfile);
@@ -290,11 +291,96 @@ public class UserApi {
             else
             {
                 jsonObject.put("message","格式不支持");
-                break;
+                Date currectdate=new Date();
+                LocalDate localDate = currectdate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                Date newdate = java.sql.Date.valueOf(localDate);
+                if(!videoService.getFailnum().get(videoService.getFailnum().size() - 1).equals(newdate))    //今天第一次记录
+                {
+                    Pair<Date,Integer> tmp=new Pair<>(newdate,1);
+                    videoService.getFailnum().add(tmp);
+                }
+                else
+                {
+                    if(videoService.getFailnum().size()>=20)    //过滤过期数据
+                    {
+                        videoService.getFailnum().remove(0);
+                    }
+                    videoService.FailInc();
+                }
+                return jsonObject;
             }
             filestore.addhash(path,dividedfile);
             filestore.mergevideo(path,codec);
+            Date currectdate=new Date();
+            long transtime = (currectdate.getTime() - filestore.getStartTime().get(path).getTime());
+            Pair<String,String> tmp_pair = new Pair<>(path.split("/")[-1],(transtime+""));
+            filestore.getTmpTime().add(tmp_pair);    //得到当前时间差
+            LocalDate localDate = currectdate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            Date newdate = java.sql.Date.valueOf(localDate);
+            if(!videoService.getFinishnum().get(videoService.getFinishnum().size() - 1).equals(newdate))    //今天第一次记录
+            {
+                Pair<Date,Integer> tmp=new Pair<>(newdate,1);
+                videoService.getFinishnum().add(tmp);
+            }
+            else
+            {
+                if(videoService.getFinishnum().size()>=20)    //过滤过期数据
+                {
+                    videoService.getFinishnum().remove(0);
+                }
+                videoService.FinishInc();
+            }
         }
         return jsonObject;
+    }
+
+    @GetMapping("/getfinish")
+    public String getfinish()
+    {
+        JSONArray jsonArray = new JSONArray();
+        for(Pair<Date,Integer> tmp:videoService.getFinishnum())
+        {
+            JSONObject data = new JSONObject();
+            data.put("date",tmp.getKey().toString());
+            data.put("num",tmp.getValue().toString());
+        }
+        return jsonArray.toString();
+    }
+
+    @GetMapping("getcurrect")
+    public Object getcurrect()
+    {
+        JSONObject jsonObject = new JSONObject();
+        Integer tmp = filestore.getcurrect();
+        jsonObject.put("num",tmp.toString());
+        return jsonObject;
+    }
+
+    @GetMapping("getfail")
+    public String getfail()
+    {
+        JSONArray jsonArray = new JSONArray();
+        for(Pair<Date,Integer> tmp:videoService.getFailnum())
+        {
+            JSONObject data = new JSONObject();
+            data.put("date",tmp.getKey().toString());
+            data.put("num",tmp.getValue().toString());
+        }
+        return jsonArray.toString();
+    }
+
+    @GetMapping("gettime")
+    public String gettime()
+    {
+        JSONObject jsonObject = new JSONObject();
+
+        for(Pair<String,String> tmp:filestore.getTmpTime())
+        {
+            JSONObject data = new JSONObject();
+            data.put("name",tmp.getKey());
+            data.put("time",tmp.getKey());
+        }
+        filestore.getTmpTime().clear();
+        return jsonObject.toString();
     }
 }

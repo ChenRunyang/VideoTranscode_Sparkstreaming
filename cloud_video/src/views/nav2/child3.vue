@@ -4,29 +4,31 @@
 <script>
 export default {
   name: "child2",
-  created() {
-    let that = this;
-    $.get("http://localhost:3000/api/checkData/attendenceData", data => {
-      let chart = [];
-      data.forEach(element => {
-        let json = {
-          日期: element.date,
-          缺勤用户: element.absenceNum,
-          缺勤率: element.absenceNum / element.totalNum
-        };
-        chart.push(json);
-      });
-      that.chartData = { columns: ["日期", "缺勤率"], rows: chart };
-    });
-  },
+  // created() {
+  //   let that = this;
+  //    $.get(`http://localhost:1005/api/getfail`, data => {
+  //       var datajson = JSON.parse(data);
+  //       let chart = [];
+  //       for(var i=0;i<data.length;i++)
+  //       {
+  //         chart.push(
+  //         {
+  //           日期:datajson[i].data,
+  //           转码失败数:datajson[i].num
+  //         })
+  //       }
+  //       that.chartData = { columns: ["日期", "转码失败数"], rows: chart };
+  //    });
+  //  },
+
   data() {
     return {
       chartData: {
-        columns: ["日期", "缺勤率"],
+        columns: ["日期", "转码失败数"],
         rows: [
-          { 日期: "1/1", 缺勤用户: 3, 缺勤率: 0.03 },
-          { 日期: "1/2", 缺勤用户: 0, 缺勤率: 0 },
-          { 日期: "1/3", 缺勤用户: 1, 缺勤率: 0.01 }
+          { 日期: "1/1", 转码失败数: 3 },
+          { 日期: "1/2", 转码失败数: 0 },
+          { 日期: "1/3", 转码失败数: 1 }
         ]
       }
     };

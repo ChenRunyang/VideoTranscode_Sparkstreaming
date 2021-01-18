@@ -82,28 +82,21 @@
                     },{
                         label:'VP8',
                         value:'VP8',
-                    },{
-                        label:'WMV',
-                        value:'WMV',
-                    },
-                    {
-                        label:'H265',
-                        value:'H265',
                     }
                 ],
                 codec:'',
                 formatList:[
                     {
                         label:'流畅',
-                        value:'流畅',
+                        value:'fast',
                     },
                     {
                         label:'标清',
-                        value:'标清'
+                        value:'normal'
                     },
                     {
                         label:'高清',
-                        value:'高清',
+                        value:'slow',
                     },
                 ],
                 format:'',
@@ -171,7 +164,7 @@
             },
 
             transConf(){
-                $.get(`http://localhost:1005/api/transformvideo/?user=${GLOBAL.admin}&name=${this.currectvideo}`,data=>{
+                $.get(`http://localhost:1005/api/transformvideo/?user=${GLOBAL.admin}&name=${this.currectvideo}&codec=${this.codec}&format=${this.format}`,data=>{
                     console.log(data);
                 })
             },

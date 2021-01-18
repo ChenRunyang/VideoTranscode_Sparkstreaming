@@ -65,8 +65,8 @@ let routes = [{
         name: '统计',
         iconCls: 'fa fa-id-card-o',
         children: [
-            { path: '/realtimeResults', component: RealtimeResults, name: '实时考勤结果' },
-            { path: '/attendanceRate', component: AttendanceRate, name: '出勤率' }
+            { path: '/realtimeResults', component: RealtimeResults, name: '实时直播人数统计' },
+            { path: '/attendanceRate', component: AttendanceRate, name: '转码任务统计' }
         ]
     },
     {

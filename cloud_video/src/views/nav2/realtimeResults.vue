@@ -1,83 +1,113 @@
-  <template>
+<template>
   <div>
-    <h4>实时考勤结果</h4>
-    <el-table
-      v-if="tableData.length"
-      :data="tableData"
-      style="wtimeth: 100%"
-      class="table"
+    <h4>直播人数统计</h4>
+    <el-tabs
+      v-model="activeName"
+      @tab-click="handleClick"
     >
-      <el-table-column
-        prop="time"
-        label="日期"
-        wtimeth="180"
-      ></el-table-column>
-      <!-- <el-table-column prop="imgPath" label="图片" sortable wtimeth="180">
-        <template slot-scope="scope">
-          <img :src="scope.row.imgPath" alt style="wtimeth: 50px;height: 50px">
-        </template>
-      </el-table-column>-->
-      <el-table-column
-        prop="name"
-        label="姓名"
-        wtimeth="180"
-      ></el-table-column>
-      <el-table-column
-        prop="sex"
-        label="性别"
-        wtimeth="180"
-      ></el-table-column>
-      <el-table-column
-        prop="group"
-        label="群组"
-        wtimeth="180"
-      ></el-table-column>
-      <el-table-column
-        prop="ispass"
-        label="是否考勤"
-        wtimeth="180"
-      ></el-table-column>
-    </el-table>
-    <Loading
-      class="loading"
-      v-if="!tableData.length"
-    ></Loading>
+      <el-tab-pane
+        label="观看直播人数统计"
+        name="first"
+      >
+        <child1
+          v-if="isChildUpdate1"
+          :data="chartData"
+        ></child1>
+      </el-tab-pane>
+      <el-tab-pane
+        label="当前任务队列"
+        name="second"
+      >
+        <child2 v-if="isChildUpdate2"></child2>
+        <a>当前任务队列</a>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
-  <script>
+<script>
+import firstchild from "./relchild1";
+import secondchild from "./relchild2";
+
 import $ from "jquery";
-import Loading from "../loading.vue";
 export default {
   created() {
     let that = this;
     let count = 0;
-    setInterval(() => {
-      $.get("http://localhost:3000/api/checkData/realtimeData", data => {
-        if (data.length != count) {
-          that.tableData = data;
-          count = data.length;
-        }
-      }),
-        1000;
+    $.get("http://localhost:3000/api/checkData/attendenceData", data => {
+      if (data.length != count) {
+        that.tableData = data;
+        count = data.length;
+        let chart = [];
+        data.forEach(element => {
+          let json = {
+            日期: data.date,
+            已转码任务: data.realNum,
+          };
+          chart.push(json);
+        });
+        that.chartData = { columns: ["日期", "已转码任务"], rows: chart };
+      }
     });
   },
-  components: {
-    Loading
-  },
   data() {
+    this.chartSettings = {
+      metrics: ["转码任务"],
+      dimension: ["日期"]
+    };
     return {
+      activeName: "first",
+      isChildUpdate1: true,
+      isChildUpdate2: false,
+      isChildUpdate3: false,
+      isChildUpdate4: false,
+
+      chartData: {
+        columns: ["日期", "已转码任务"],
+        rows: [
+          { 日期: "1/1", 已转码任务: 97},
+          { 日期: "1/2", 已转码任务: 100},
+          { 日期: "1/3", 已转码任务: 99 }
+        ]
+      },
+
       tableData: []
     };
+  },
+
+  components: {
+    child1: firstchild,
+    child2: secondchild,
+  },
+
+  methods: {
+    handleClick(tab) {
+      if (tab.name == "first") {
+        this.isChildUpdate1 = true;
+        this.isChildUpdate2 = false;
+
+      } else if (tab.name == "second") {
+        this.isChildUpdate1 = false;
+        this.isChildUpdate2 = true;
+      }
+    }
   }
 };
 </script>
 
-<style scoped>
-.table {
+<style lang="scss" scoped>
+.graph {
   width: 100%;
+  height: 250px;
+  background-color: #eeeeee;
+  margin-bottom: 20px;
+  text-align: center;
+  line-height: 300px;
+  background-image: url("../../assets/graph2.jpg");
+  background-size: 100% 250px;
 }
-.loading {
-  margin-top: 30px;
+.table {
+  width: 100px;
+  height: 200px;
 }
 </style>

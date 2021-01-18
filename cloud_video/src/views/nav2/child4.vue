@@ -4,28 +4,36 @@
 <script>
 export default {
   name: "child2",
-  created() {
-    let that = this;
-    $.get("http://localhost:3000/api/checkData/attendenceData", data => {
-      let chart = [];
-      data.forEach(element => {
-        let json = {
-          日期: element.date,
-          平均考勤时长: element.avgTime
-        };
-        chart.push(json);
-      });
-      that.chartData = { columns: ["日期", "平均考勤时长"], rows: chart };
-    });
-  },
+  // created() {
+  //   let that = this;
+  //   let chart = [];
+  //  setInterval(
+  //    ()=>{
+  //       $.get(`http://localhost:1005/api/gettime`, data => {
+  //       var d = new Date();
+  //       if(chart.length>=20)
+  //       {
+  //         chart.slice(0,1);
+  //       }
+  //       chart.push(
+  //         {
+  //           视频名:data.name,
+  //           视频:data.time
+  //         }
+  //       )
+  //       that.chartData = { columns: ["视频名", "转码时长"], rows: chart };
+  //    });
+  //    },5000)    //每5秒查询一次，检测当前的任务数量
+  // },
+
   data() {
     return {
       chartData: {
-        columns: ["日期", "平均考勤时长"],
+        columns: ["视频名", "转码时长"],
         rows: [
-          // { 日期: "1/1", 平均考勤时长: 60, 签到率: 0.97 },
-          // { 日期: "1/2", 平均考勤时长: 50, 签到率: 1 },
-          // { 日期: "1/3", 平均考勤时长: 55, 签到率: 0.99 }
+          { 视频名: "1/1", 转码时长: 60 },
+          { 视频名: "1/2", 转码时长: 50 },
+          { 视频名: "1/3", 转码时长: 55 }
         ]
       }
     };

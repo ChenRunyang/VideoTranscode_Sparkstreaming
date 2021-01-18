@@ -1,12 +1,12 @@
 <template>
   <div>
-    <h4>趋势图</h4>
+    <h4>任务状态图</h4>
     <el-tabs
       v-model="activeName"
       @tab-click="handleClick"
     >
       <el-tab-pane
-        label="实到人数"
+        label="已转码任务统计"
         name="first"
       >
         <child1
@@ -24,47 +24,44 @@
             width="180"
           ></el-table-column>
           <el-table-column
-            prop="totalNum"
-            label="应到人数"
+            prop="name"
+            label="视频名"
             width="180"
           ></el-table-column>
           <el-table-column
-            prop="realNum"
-            label="实到人数"
+            prop="time"
+            label="转码时间"
           ></el-table-column>
           <el-table-column
-            prop="absenceNum"
-            label="缺勤人数"
+            prop="Inputformat"
+            label="原格式"
           ></el-table-column>
           <el-table-column
-            prop="absenceRate"
-            label="缺勤率"
-          ></el-table-column>
-          <el-table-column
-            prop="avgTime"
-            label="平均考勤时长"
+            prop="Outputformat"
+            label="转码格式"
           ></el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane
-        label="缺勤人数"
+        label="当前任务队列"
         name="second"
       >
         <child2 v-if="isChildUpdate2"></child2>
+        <a>当前任务队列</a>
       </el-tab-pane>
       <el-tab-pane
-        label="缺勤率"
+        label="转码失败数"
         name="third"
       >
         <child3 v-if="isChildUpdate3"></child3>
-        <a>缺勤率</a>
+        <a>转码失败数</a>
       </el-tab-pane>
       <el-tab-pane
-        label="平均考勤时长"
+        label="视频转码时长"
         name="fourth"
       >
         <child4 v-if="isChildUpdate4"></child4>
-        <a>考勤时长</a>
+        <a>视频转码时长</a>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -88,18 +85,17 @@ export default {
         data.forEach(element => {
           let json = {
             日期: data.date,
-            签到用户: data.realNum,
-            签到率: data.realNum / data.totalNum
+            已转码任务: data.realNum,
           };
           chart.push(json);
         });
-        that.chartData = { columns: ["日期", "签到用户"], rows: chart };
+        that.chartData = { columns: ["日期", "已转码任务"], rows: chart };
       }
     });
   },
   data() {
     this.chartSettings = {
-      metrics: ["签到用户"],
+      metrics: ["转码任务"],
       dimension: ["日期"]
     };
     return {
@@ -110,11 +106,11 @@ export default {
       isChildUpdate4: false,
 
       chartData: {
-        columns: ["日期", "签到用户"],
+        columns: ["日期", "已转码任务"],
         rows: [
-          { 日期: "1/1", 签到用户: 97, 签到率: 0.97 },
-          { 日期: "1/2", 签到用户: 100, 签到率: 1 },
-          { 日期: "1/3", 签到用户: 99, 签到率: 0.99 }
+          { 日期: "1/1", 已转码任务: 97},
+          { 日期: "1/2", 已转码任务: 100},
+          { 日期: "1/3", 已转码任务: 99 }
         ]
       },
 
