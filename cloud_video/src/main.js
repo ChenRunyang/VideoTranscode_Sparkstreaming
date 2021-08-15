@@ -16,8 +16,6 @@ Mock.bootstrap();
 import 'font-awesome/css/font-awesome.min.css'
 import Vchart from 'v-charts'
 import { vueBaberrage } from 'vue-baberrage'
-import Stream from 'rtmp-streamer'
-
 
 require('video.js/dist/video-js.css')
 require('vue-video-player/src/custom-theme.css')
@@ -28,7 +26,6 @@ Vue.use(Vuex)
 Vue.use(Vchart)
 Vue.use(VideoPlayer)
 Vue.use(vueBaberrage)
-Vue.use(Stream)
 
 //NProgress.configure({ showSpinner: false });
 

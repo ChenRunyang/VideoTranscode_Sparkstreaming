@@ -159,7 +159,7 @@
 export default {
   data() {
     return {
-      sysName: "云 视 频 转 码 系 统",
+      sysName: "流媒体转码系统",
       collapsed: false,
       sysUserName: "",
       sysUserAvatar: "",

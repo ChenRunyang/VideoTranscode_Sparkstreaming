@@ -90,9 +90,9 @@ public class fileTrans {
         if (avformat_open_input(ifmtCtx, filepath, null, null) != 0) {
             return dividedfile;
         }
-        if ((ret = avformat_find_stream_info(ifmtCtx, 0)) < 0) {
-            return dividedfile;
-        }
+        //if ((ret = avformat_find_stream_info(ifmtCtx, 0)) < 0) {
+        //    return dividedfile;
+        //}
         int number = 0;
         av_init_packet(splitKeyPacket);
         splitKeyPacket.data(null);

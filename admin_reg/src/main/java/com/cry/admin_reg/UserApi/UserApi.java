@@ -139,6 +139,7 @@ public class UserApi {
         return jsonObject;
     }
 
+
     @GetMapping("/deletegroup")
     public Object deletegroup(@RequestParam(required = true,value = "name")String name,@RequestParam(required = true,value = "user") String user){
         JSONObject jsonObject=new JSONObject();

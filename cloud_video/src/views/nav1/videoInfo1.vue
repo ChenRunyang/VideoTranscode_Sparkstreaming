@@ -29,7 +29,6 @@
           <el-button class="btn-2" type="primary" @click="cancel">视频操作</el-button>
           <el-button type="primary" class="btn-2" @click="end">结束录制</el-button>
           <el-button type="danger" class="btn-3" @click="takeshot">截屏</el-button>
-          <a style=" margin: 60px 20px 100px 30px;">{{state}}</a>
         </el-form-item>
       </el-form>
     </div>
@@ -234,7 +233,6 @@ export default {
 
     videoupload(){
       let blob=new Blob(this.chunks,{ type: 'video/mp4'} );
-      this.downloadUrl = window.URL.createObjectURL(blob);
       let formData = new FormData();
       formData.append("file", blob);
       formData.append("name",this.name);
@@ -242,7 +240,7 @@ export default {
       formData.append("admin",GLOBAL.admin);
         $.ajax({
           type: "post",
-          url: `http://localhost:1005/api/videoupdate`,
+          url: `http://10.1.2.172:1000/api/videoupdate`,
           data: formData,
           processData: false,
           contentType: false,

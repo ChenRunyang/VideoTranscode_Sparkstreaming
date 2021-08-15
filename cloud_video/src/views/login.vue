@@ -8,7 +8,7 @@
       class="demo-ruleForm login-container"
     >
       <img class="avatar" src="../assets/avatar.png" alt="no img">
-      <h3 class="title">云 视 频 转 码 系 统</h3>
+      <h3 class="title">流 媒 体 转 码 系 统</h3>
       <el-form-item prop="account">
         <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="账户名"></el-input>
       </el-form-item>

@@ -312,6 +312,5 @@ public class fileStore {
         exeCmd("ffmpeg -f concat -i "+path.split(".")[0]+".txt -c copy "+path);    //合并转码文件
         deletetmp(path.split(".")[0]+".txt");
         deletepath(path.split(".")[0]+".txt");
-
     }
 }
